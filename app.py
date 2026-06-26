@@ -7,6 +7,8 @@ from plotly.subplots import make_subplots
 import requests
 from statsmodels.tsa.stattools import coint
 from sklearn.linear_model import LinearRegression
+
+
 # ---- PASSWORD GATE ----
 def check_password():
     if "password_correct" not in st.session_state:
@@ -25,6 +27,7 @@ def check_password():
         st.stop()
 
 check_password()
+
 st.set_page_config(page_title="Equity Research Terminal", layout="wide")
 
 st.markdown("""
