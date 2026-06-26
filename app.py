@@ -7,7 +7,24 @@ from plotly.subplots import make_subplots
 import requests
 from statsmodels.tsa.stattools import coint
 from sklearn.linear_model import LinearRegression
+# ---- PASSWORD GATE ----
+def check_password():
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
 
+    if not st.session_state["password_correct"]:
+        st.markdown("# EQUITY RESEARCH TERMINAL")
+        st.markdown("<p style='color:#888; font-size:12px; letter-spacing:2px;'>RESTRICTED ACCESS — ENTER PASSWORD TO CONTINUE</p>", unsafe_allow_html=True)
+        password = st.text_input("PASSWORD", type="password")
+        if st.button("ENTER", type="primary"):
+            if password == "Airbear2004!":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("INCORRECT PASSWORD")
+        st.stop()
+
+check_password()
 st.set_page_config(page_title="Equity Research Terminal", layout="wide")
 
 st.markdown("""
