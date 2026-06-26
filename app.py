@@ -70,10 +70,13 @@ st.sidebar.markdown("<p style='color:#555; font-size:10px;'>POWERED BY YAHOO FIN
 
 @st.cache_data
 def load_data(ticker, period):
-    stock = yf.Ticker(ticker)
-    df = stock.history(period=period)
-    info = stock.info
-    return df, info
+    try:
+        stock = yf.Ticker(ticker)
+        df = stock.history(period=period)
+        info = stock.info
+        return df, info
+    except Exception:
+        return None, {}
 
 @st.cache_data
 def load_multi(tickers, period):
@@ -87,7 +90,13 @@ def load_multi(tickers, period):
     return pd.DataFrame(data)
 
 df, info = load_data(ticker, period)
+if df is None or df.empty:
+    st.error("Market data temporarily unavailable. Please refresh in 60 seconds.")
+    st.stop()
 bench_df, _ = load_data(benchmark, period)
+if bench_df is None or bench_df.empty:
+    st.error("Benchmark data temporarily unavailable. Please refresh in 60 seconds.")
+    st.stop()
 tickers_list = [t.strip().upper() for t in compare_tickers.split(",") if t.strip()]
 all_tickers = list(set([ticker, benchmark] + tickers_list))
 multi_df = load_multi(tuple(all_tickers), period)
