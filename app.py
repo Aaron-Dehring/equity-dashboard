@@ -71,20 +71,58 @@ st.sidebar.markdown("<p style='color:#555; font-size:10px;'>POWERED BY YAHOO FIN
 @st.cache_data
 def load_data(ticker, period):
     try:
-        stock = yf.Ticker(ticker)
-        df = stock.history(period=period)
-        info = stock.info
-        return df, info
-    except Exception:
-        return None, {}
+        from polygon import RESTClient
+        from datetime import datetime, timedelta
+        import os
 
+        polygon_key = st.secrets.get("POLYGON_API_KEY", None) if hasattr(st, 'secrets') else None
+        if not polygon_key:
+            polygon_key = os.environ.get("POLYGON_API_KEY", "p2daWuAvPpeLAER4UPDyrVHCfTGylQ_Y")
+        client = RESTClient(api_key=polygon_key)
+
+        period_days = {"6mo": 180, "1y": 365, "2y": 730, "5y": 1825}
+        days = period_days.get(period, 365)
+        end = datetime.now()
+        start = end - timedelta(days=days)
+
+        aggs = client.get_aggs(
+            ticker,
+            1,
+            "day",
+            start.strftime("%Y-%m-%d"),
+            end.strftime("%Y-%m-%d")
+        )
+
+        df = pd.DataFrame([{
+            'Open': a.open,
+            'High': a.high,
+            'Low': a.low,
+            'Close': a.close,
+            'Volume': a.volume,
+        } for a in aggs])
+
+        df.index = pd.to_datetime([a.timestamp for a in aggs], unit='ms')
+
+        details = client.get_ticker_details(ticker)
+        info = {
+            'longName': details.name,
+            'sector': getattr(details, 'sic_description', 'N/A'),
+            'marketCap': getattr(details, 'market_cap', 'N/A'),
+            'longBusinessSummary': getattr(details, 'description', 'N/A')
+        }
+        return df, info
+
+    except Exception as e:
+        st.error(f"Data error: {str(e)}")
+        return None, {}
 @st.cache_data
 def load_multi(tickers, period):
     data = {}
     for t in tickers:
         try:
             df, _ = load_data(t, period)
-            data[t] = df['Close']
+            if df is not None and not df.empty:
+                data[t] = df['Close']
         except:
             pass
     return pd.DataFrame(data)
