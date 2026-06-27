@@ -77,6 +77,7 @@ def load_data(ticker, period):
 
         polygon_key = st.secrets.get("POLYGON_API_KEY", None) if hasattr(st, 'secrets') else None
         if not polygon_key:
+            # Try environment variable, with a fallback default key
             polygon_key = os.environ.get("POLYGON_API_KEY", "p2daWuAvPpeLAER4UPDyrVHCfTGylQ_Y")
         client = RESTClient(api_key=polygon_key)
 
