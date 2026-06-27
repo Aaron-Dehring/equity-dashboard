@@ -226,7 +226,7 @@ with tab1:
 
     if st.button("RUN ANALYST DEBATE", type="primary"):
 
-        API_KEY = "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"
+        API_KEY = st.secrets["ANTHROPIC_API_KEY"]
         HEADERS = {
             "Content-Type": "application/json",
             "x-api-key": API_KEY,
@@ -664,7 +664,7 @@ EARNINGS OUTLOOK
                     "https://api.anthropic.com/v1/messages",
                     headers={
                         "Content-Type": "application/json",
-                        "x-api-key": "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",
+                        "x-api-key": st.secrets["ANTHROPIC_API_KEY"],                        
                         "anthropic-version": "2023-06-01"
                     },
                     json={"model": "claude-sonnet-4-6", "max_tokens": 800, "messages": [{"role": "user", "content": earn_prompt}]}
@@ -683,7 +683,7 @@ with tab5:
     st.markdown("<div class='section-header'>MARKET SENTIMENT ANALYSIS — NLP NEWS SCORING</div>", unsafe_allow_html=True)
     st.markdown("<p style='color:#888; font-size:12px;'>Pulls live news headlines and runs NLP sentiment scoring to generate a quantitative sentiment signal.</p>", unsafe_allow_html=True)
 
-    NEWS_API_KEY = "YOUR_NEWS_API_KEY_HERE"
+    NEWS_API_KEY = st.secrets["NEWS_API_KEY"]
 
     sent_ticker = st.text_input("SENTIMENT TICKER", value="AAPL", key="sent_ticker").upper()
     sent_company = st.text_input("COMPANY NAME (for news search)", value="Apple", key="sent_company")
@@ -695,7 +695,7 @@ with tab5:
             from newsapi import NewsApiClient
             from datetime import datetime, timedelta
 
-            newsapi = NewsApiClient(api_key="04eb3eee1c894efebfd1454428228f9a")
+            newsapi = NewsApiClient(api_key=NEWS_API_KEY)
             from_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
 
             articles = newsapi.get_everything(
@@ -834,7 +834,7 @@ TRADING IMPLICATIONS
                     "https://api.anthropic.com/v1/messages",
                     headers={
                         "Content-Type": "application/json",
-                        "x-api-key": "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",
+                        "x-api-key": st.secrets["ANTHROPIC_API_KEY"],                        
                         "anthropic-version": "2023-06-01"
                     },
                     json={"model": "claude-sonnet-4-6", "max_tokens": 800, "messages": [{"role": "user", "content": sent_prompt}]}
