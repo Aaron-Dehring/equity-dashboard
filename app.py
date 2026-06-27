@@ -738,11 +738,12 @@ with tab5:
             from_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
 
             articles = newsapi.get_everything(
-                q=sent_company,
+                q=f'"{sent_company}" stock OR "{sent_company}" earnings OR "{sent_company}" shares',
                 from_param=from_date,
                 language='en',
                 sort_by='publishedAt',
-                page_size=num_articles
+                page_size=num_articles,
+                domains='reuters.com,bloomberg.com,cnbc.com,wsj.com,ft.com,marketwatch.com,seekingalpha.com,finance.yahoo.com,barrons.com,investopedia.com'
             )
 
             if articles['totalResults'] > 0:
