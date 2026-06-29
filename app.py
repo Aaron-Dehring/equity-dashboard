@@ -418,6 +418,8 @@ with tab2:
                 w = np.random.random(n)
                 w /= w.sum()
                 weights_record.append(w)
+                if len(w) != len(mean_returns):
+                    continue
                 port_return = np.dot(w, mean_returns)
                 port_vol = np.sqrt(np.dot(w.T, np.dot(cov_matrix, w)))
                 sharpe_p = port_return / port_vol
